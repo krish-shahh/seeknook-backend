@@ -1,40 +1,30 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); // Make sure to set your Stripe secret key in the environment variables
+const { Client, Environment } = require('square');
+const crypto = require('crypto');
 
-const createPaymentIntent = async (req, res) => {
-  const { plan, email } = req.body;
+const client = new Client({
+  environment: process.env.NODE_ENV === 'production' ? Environment.Production : Environment.Sandbox,
+  accessToken: process.env.SQUARE_ACCESS_TOKEN,
+});
 
-  let amount;
-  switch (plan) {
-    case 'basic':
-      amount = 25000; // $250.00 in cents
-      break;
-    case 'bronze':
-      amount = 50000; // $500.00 in cents
-      break;
-    case 'gold':
-      amount = 100000; // $1000.00 in cents
-      break;
-    default:
-      return res.status(400).send('Invalid plan selected.');
-  }
+exports.createPayment = async (req, res) => {
+  const { amount, currency, sourceId } = req.body;
 
   try {
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount,
-      currency: 'usd',
-      payment_method_types: ['card'],
-      receipt_email: email,
+    const idempotencyKey = crypto.randomBytes(22).toString('hex');
+
+    const paymentsApi = client.paymentsApi;
+    const { result } = await paymentsApi.createPayment({
+      idempotencyKey,
+      sourceId,
+      amountMoney: {
+        amount,
+        currency,
+      },
     });
 
-    res.send({
-      clientSecret: paymentIntent.client_secret,
-    });
+    res.status(200).json(result);
   } catch (error) {
     console.error(error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).send(error);
   }
-};
-
-module.exports = {
-  createPaymentIntent,
 };
