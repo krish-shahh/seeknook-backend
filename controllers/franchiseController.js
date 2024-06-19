@@ -8,13 +8,19 @@ exports.getFranchises = async (req, res) => {
 
   try {
     const data = await dynamoDB.scan(params).promise();
-    const franchiseData = data.Items.map(f => ({
-      ...f,
-      sponsorStatus: f.payment_preferences === 'gold' ? 'gold'
-        : f.payment_preferences === 'bronze' ? 'bronze'
-        : null,
-    }));
+    const franchiseData = data.Items
+      .filter(franchise => franchise.status === 'approved') // Filter only approved franchises
+      .map(franchise => ({
+        ...franchise,
+        sponsorStatus: franchise.payment_preferences?.includes('gold')
+          ? 'gold'
+          : franchise.payment_preferences?.includes('bronze')
+          ? 'bronze'
+          : null,
+        likes: franchise.likes || 0 // Ensure likes is defaulted to 0 if undefined
+      }));
 
+    // Sort franchises based on sponsor status and likes
     franchiseData.sort((a, b) => {
       if (a.sponsorStatus === 'gold' && b.sponsorStatus !== 'gold') return -1;
       if (a.sponsorStatus !== 'gold' && b.sponsorStatus === 'gold') return 1;
