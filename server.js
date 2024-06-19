@@ -9,6 +9,7 @@ const listingsRoutes = require('./routes/listingsRoutes');
 const serviceRoutes = require('./routes/serviceRoutes'); 
 const favoritesRoutes = require('./routes/favoritesRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 
 dotenv.config();
 
@@ -23,7 +24,7 @@ app.use('/api/services', serviceRoutes);
 app.use('/api', listingsRoutes);
 app.use('/api/favorites', favoritesRoutes);
 app.use('/api/admin', adminRoutes);
-
+app.use('/api/payment', paymentRoutes); 
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
