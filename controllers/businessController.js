@@ -8,15 +8,17 @@ exports.getBusinesses = async (req, res) => {
 
   try {
     const data = await dynamoDB.scan(params).promise();
-    const businessData = data.Items.map(business => ({
-      ...business,
-      sponsorStatus: business.payment_preferences?.includes('gold')
-        ? 'gold'
-        : business.payment_preferences?.includes('bronze')
-        ? 'bronze'
-        : null,
-      likes: business.likes || 0
-    }));
+    const businessData = data.Items
+      .filter(business => business.status === 'approved') // Filter only approved businesses
+      .map(business => ({
+        ...business,
+        sponsorStatus: business.payment_preferences?.includes('gold')
+          ? 'gold'
+          : business.payment_preferences?.includes('bronze')
+          ? 'bronze'
+          : null,
+        likes: business.likes || 0 // Ensure likes is defaulted to 0 if undefined
+      }));
 
     // Sort businesses based on sponsor status and likes
     businessData.sort((a, b) => {
@@ -60,7 +62,7 @@ exports.createBusiness = async (req, res) => {
       useruid,
       created_at: new Date().toISOString(),
       status: 'pending',
-      likes: 0,
+      likes: 0, // Initialize likes to 0
     },
   };
 
@@ -70,6 +72,29 @@ exports.createBusiness = async (req, res) => {
   } catch (error) {
     console.error('Error creating business:', error);
     res.status(500).json({ error: 'Failed to create business.' });
+  }
+};
+
+exports.updateBusinessLikes = async (req, res) => {
+  const { id } = req.params;
+  const { likes } = req.body;
+
+  const params = {
+    TableName: 'businesses',
+    Key: { uuid: id },
+    UpdateExpression: 'set likes = :likes',
+    ExpressionAttributeValues: {
+      ':likes': likes
+    },
+    ReturnValues: 'UPDATED_NEW'
+  };
+
+  try {
+    const result = await dynamoDB.update(params).promise();
+    res.json({ likes: result.Attributes.likes });
+  } catch (error) {
+    console.error('Error updating business likes:', error);
+    res.status(500).json({ error: 'Failed to update likes.' });
   }
 };
 
@@ -118,28 +143,5 @@ exports.deleteBusiness = async (req, res) => {
   } catch (error) {
     console.error('Error deleting business:', error);
     res.status(500).json({ error: 'Failed to delete business.' });
-  }
-};
-
-exports.updateBusinessLikes = async (req, res) => {
-  const { id } = req.params;
-  const { likes } = req.body;
-
-  const params = {
-    TableName: 'businesses',
-    Key: { uuid: id },
-    UpdateExpression: 'set likes = :likes',
-    ExpressionAttributeValues: {
-      ':likes': likes
-    },
-    ReturnValues: 'UPDATED_NEW'
-  };
-
-  try {
-    const result = await dynamoDB.update(params).promise();
-    res.json({ likes: result.Attributes.likes });
-  } catch (error) {
-    console.error('Error updating business likes:', error);
-    res.status(500).json({ error: 'Failed to update likes.' });
   }
 };
