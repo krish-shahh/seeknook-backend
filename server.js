@@ -8,6 +8,7 @@ const messageRoutes = require('./routes/messageRoutes');
 const listingsRoutes = require('./routes/listingsRoutes');
 const serviceRoutes = require('./routes/serviceRoutes'); 
 const favoritesRoutes = require('./routes/favoritesRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api', listingsRoutes);
 app.use('/api/favorites', favoritesRoutes);
+app.use('/api/admin', adminRoutes);
 
 
 const PORT = process.env.PORT || 5001;

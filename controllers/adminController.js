@@ -113,3 +113,53 @@ exports.updateFranchiseStatus = async (req, res) => {
     res.status(500).json({ error: 'Failed to update franchise status.' });
   }
 };
+
+exports.getAdminMessage = async (req, res) => {
+  const params = {
+    TableName: 'messages',
+    Key: { uuid: 'adminMessage' },
+  };
+
+  try {
+    const data = await dynamoDB.get(params).promise();
+    res.json(data.Item);
+  } catch (error) {
+    console.error('Error fetching admin message:', error);
+    res.status(500).json({ error: 'Failed to fetch admin message.' });
+  }
+};
+
+exports.saveAdminMessage = async (req, res) => {
+  const { message } = req.body;
+
+  const params = {
+    TableName: 'messages',
+    Item: {
+      uuid: 'adminMessage',
+      message,
+    },
+  };
+
+  try {
+    await dynamoDB.put(params).promise();
+    res.json({ message: 'Admin message saved successfully' });
+  } catch (error) {
+    console.error('Error saving admin message:', error);
+    res.status(500).json({ error: 'Failed to save admin message.' });
+  }
+};
+
+exports.deleteAdminMessage = async (req, res) => {
+  const params = {
+    TableName: 'messages',
+    Key: { uuid: 'adminMessage' },
+  };
+
+  try {
+    await dynamoDB.delete(params).promise();
+    res.json({ message: 'Admin message deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting admin message:', error);
+    res.status(500).json({ error: 'Failed to delete admin message.' });
+  }
+};
