@@ -37,7 +37,7 @@ exports.getBusinesses = async (req, res) => {
 };
 
 exports.createBusiness = async (req, res) => {
-  const { name, service_type, email, phone, zipcode, city, website, instagram, facebook, whatsapp, description, display_preferences, service_area, business_type, referred_by, useruid } = req.body;
+  const { name, service_type, email, phone, zipcode, city, website, instagram, facebook, whatsapp, description, display_preferences, service_area, business_type, referred_by, useruid, payment_preferences, payment_id } = req.body;
   const uuid = uuidv4();
 
   const params = {
@@ -63,6 +63,8 @@ exports.createBusiness = async (req, res) => {
       created_at: new Date().toISOString(),
       status: 'pending',
       likes: 0, // Initialize likes to 0
+      payment_preferences, // Add payment preferences
+      payment_id, // Add payment ID
     },
   };
 
