@@ -41,8 +41,8 @@ exports.createPayment = async (req, res) => {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: 'Order Receipt',
-      text: `Thank you for your purchase! Your payment of $${(amount / 100).toFixed(2)} has been successfully processed. Your payment ID is ${result.payment.id}.`,
+      subject: 'SeekNook Order Receipt',
+      text: `Thank you for your purchase! Your payment of $${(amount / 100).toFixed(2)} has been successfully processed. Your payment ID is ${result.payment.id}. Please wait 2-4 business days to recieve approval for your listing.`,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
