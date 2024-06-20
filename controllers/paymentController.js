@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 
 const client = new Client({
-  environment: process.env.NODE_ENV === 'production' ? Environment.Production : Environment.Sandbox,
+  environment: "sandbox",
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
 });
 
