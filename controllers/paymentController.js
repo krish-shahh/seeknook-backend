@@ -1,29 +1,30 @@
-const express = require('express');
 const { Client, Environment } = require('square');
-const router = express.Router();
+const crypto = require('crypto');
 
 const client = new Client({
-  environment: Environment.Sandbox,
+  environment: process.env.NODE_ENV === 'production' ? Environment.Production : Environment.Sandbox,
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
 });
 
-router.post('/create-payment', async (req, res) => {
+exports.createPayment = async (req, res) => {
   const { amount, currency, sourceId } = req.body;
-  
+
   try {
-    const response = await client.paymentsApi.createPayment({
+    const idempotencyKey = crypto.randomBytes(22).toString('hex');
+
+    const paymentsApi = client.paymentsApi;
+    const { result } = await paymentsApi.createPayment({
+      idempotencyKey,
       sourceId,
-      idempotencyKey: `${Date.now()}`, // Unique key for each request
       amountMoney: {
         amount,
         currency,
       },
     });
-    res.json({ paymentId: response.result.payment.id });
+
+    res.status(200).json(result);
   } catch (error) {
     console.error('Error processing payment:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).send(error);
   }
-});
-
-module.exports = router;
+};

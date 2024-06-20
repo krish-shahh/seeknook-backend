@@ -10,7 +10,6 @@ const serviceRoutes = require('./routes/serviceRoutes');
 const favoritesRoutes = require('./routes/favoritesRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
-const { Client, Environment } = require('square');
 
 dotenv.config();
 
