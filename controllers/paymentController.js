@@ -14,11 +14,11 @@ exports.createPayment = async (req, res) => {
 
     const paymentsApi = client.paymentsApi;
     const { result } = await paymentsApi.createPayment({
-      idempotencyKey,
-      sourceId,
+      idempotencyKey: idempotencyKey,
+      sourceId: sourceId,
       amountMoney: {
-        amount,
-        currency,
+        amount: amount,
+        currency: currency,
       },
     });
 
