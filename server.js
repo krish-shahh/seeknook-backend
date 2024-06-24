@@ -10,6 +10,8 @@ const serviceRoutes = require('./routes/serviceRoutes');
 const favoritesRoutes = require('./routes/favoritesRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
+const magicLinkRoutes = require('./routes/magicLinkRoutes');
+const otpRoutes = require('./routes/otpRoutes');
 
 dotenv.config();
 
@@ -25,6 +27,8 @@ app.use('/api', listingsRoutes);
 app.use('/api/favorites', favoritesRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/payment', paymentRoutes); 
+app.use('/api/magic', magicLinkRoutes);  
+app.use('/api/otp', otpRoutes);
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
