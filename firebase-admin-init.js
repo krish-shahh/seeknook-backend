@@ -1,9 +1,10 @@
 // firebase-admin-init.js
 const admin = require('firebase-admin');
-const serviceAccount = require('./seeknook-dev-firebase-adminsdk-d5nsy-8d99b78637.json'); // Replace with the path to your service account key file
+const firebaseConfig = JSON.parse(process.env.FIREBASE_CONFIG);
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+    credential: admin.credential.cert(firebaseConfig)
 });
 
 module.exports = admin;
+
