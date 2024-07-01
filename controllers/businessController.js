@@ -65,6 +65,7 @@ exports.createBusiness = async (req, res) => {
       likes: 0, // Initialize likes to 0
       payment_preferences, // Add payment preferences
       payment_id, // Add payment ID
+      paid,
     },
   };
 
