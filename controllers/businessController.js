@@ -37,7 +37,7 @@ exports.getBusinesses = async (req, res) => {
 };
 
 exports.createBusiness = async (req, res) => {
-  const { name, service_type, email, phone, zipcode, city, website, instagram, facebook, whatsapp, description, display_preferences, service_area, business_type, referred_by, useruid, payment_preferences, payment_id } = req.body;
+  const { name, service_type, email, phone, zipcode, city, website, instagram, facebook, whatsapp, description, display_preferences, service_area, business_type, referred_by, useruid, payment_preferences, payment_id, paid } = req.body;
   const uuid = uuidv4();
 
   const params = {
