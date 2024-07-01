@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
-const admin = require('../firebase-admin-init'); // Ensure this path is correct
+const admin = require('../firebase-admin-init');
 const dotenv = require('dotenv');
+const generateEmailHTML = require('./emailComponent'); // Path to your emailComponent.js
 dotenv.config();
 
 let otps = {};
@@ -20,11 +21,13 @@ exports.sendOtp = async (req, res) => {
   const otp = generateOtp();
   otps[email] = otp;
 
+  const emailHtml = generateEmailHTML(otp);
+
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,
     subject: 'Your OTP Code',
-    text: `Your OTP code is ${otp}. It is valid for 10 minutes.`,
+    html: emailHtml,
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
